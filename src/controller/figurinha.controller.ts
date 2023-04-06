@@ -13,6 +13,16 @@ async function create(req: Request, res: Response) {
     }
 }
 
+async function get(_req: Request, res: Response) {
+    try{
+        const listFigurinha = await figurinhaService.get()
+        res.status(200).send(listFigurinha)
+    }catch(err){
+        res.status(500).send(err.message)
+    }
+}
+
 export default {
-    create
+    create,
+    get
 }

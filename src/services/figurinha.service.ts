@@ -8,17 +8,21 @@ function hasDuplicates(array: number[]) {
 async function create(figurinha:Figurinha) {
 
     const retorno  = await figurinhaRepository.search(figurinha.numero)
-
     if(retorno.rowCount){
         await figurinhaRepository.update(figurinha.numero, figurinha.quantidade)
-        return
-        
+        return     
     }
 
     await figurinhaRepository.create(figurinha.numero, figurinha.quantidade)
 
 }
 
+async function get() {
+    const listFigurinha = await figurinhaRepository.get()
+    return listFigurinha.rows
+}
+
 export default{
-    create
+    create,
+    get
 }

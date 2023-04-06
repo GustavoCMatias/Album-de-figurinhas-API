@@ -23,8 +23,17 @@ async function update(numero: number, quantidade: number)  {
     `, [quantidade, numero])
 }
 
+async function get()  {
+    return await connectionDb.query(`
+    SELECT numero, quantidade
+    FROM figurinhas
+    ORDER BY numero ASC
+    `,)
+}
+
 export default {
     create,
     search, 
-    update
+    update,
+    get
 }
