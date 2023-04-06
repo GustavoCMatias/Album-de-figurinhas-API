@@ -3,6 +3,7 @@ export type Figurinha = {
     quantidade: number
 }
 
-export interface FigurinhaBody {
-    figurinhaList: Figurinha[];
+export interface ITrocaBody {
+    fig_ganha: number,
+    fig_perdida: number
   }

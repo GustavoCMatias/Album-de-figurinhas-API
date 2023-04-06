@@ -15,12 +15,20 @@ async function search(numFigurinha: number) {
     `, [numFigurinha])
 }
 
-async function update(numero: number, quantidade: number)  {
+async function won(numero: number, quantidade: number)  {
     return await connectionDb.query(`
     UPDATE figurinhas
     SET quantidade = quantidade + $1
     WHERE numero = $2
     `, [quantidade, numero])
+}
+
+async function lost(numero: number, quantidade:number)  {
+    return await connectionDb.query(`
+    UPDATE figurinhas
+    SET quantidade = quantidade - $2
+    WHERE numero = $1
+    `, [numero, quantidade])
 }
 
 async function get()  {
@@ -34,6 +42,7 @@ async function get()  {
 export default {
     create,
     search, 
-    update,
+    lost,
+    won,
     get
 }
