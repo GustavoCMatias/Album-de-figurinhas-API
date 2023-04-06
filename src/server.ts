@@ -1,6 +1,6 @@
 import express, { json } from "express";
 import cors from "cors";
-import figurinhaRouter from "./src/routes/figurinha.router";
+import figurinhaRouter from "routes/figurinha.router";
 
 
 const app = express();

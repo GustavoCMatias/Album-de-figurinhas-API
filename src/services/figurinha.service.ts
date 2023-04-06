@@ -1,19 +1,21 @@
 import figurinhaRepository from '../repository/figurinha.repository';
 import { Figurinha } from './../protocols';
 
+function hasDuplicates(array: number[]) {
+    return (new Set(array)).size !== array.length;
+}
 
-async function create(figurinhaList:Figurinha[]) {
-    const placeHolder: string[] = [];
-    const figurinhaInfo: number[] = [];
+async function create(figurinha:Figurinha) {
 
-    figurinhaList.forEach((item, i) => {
-        placeHolder.push(`$${2*i}, $${2*i+1}`)
-        figurinhaInfo.push(item.numero, item.quantidade)
-    })
+    const retorno  = await figurinhaRepository.search(figurinha.numero)
 
-    const placeHolderStr: string = placeHolder.join('), (')
+    if(retorno.rowCount){
+        await figurinhaRepository.update(figurinha.numero, figurinha.quantidade)
+        return
+        
+    }
 
-    figurinhaRepository.create(placeHolderStr, figurinhaInfo)
+    await figurinhaRepository.create(figurinha.numero, figurinha.quantidade)
 
 }
 
