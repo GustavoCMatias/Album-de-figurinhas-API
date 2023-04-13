@@ -1,48 +1,72 @@
-import connectionDb from "../config/database"
 
+import prisma from "../config/database.js";
 
-async function create(numero: number, quantidade: number) {
-    await connectionDb.query(`
-    INSERT INTO figurinhas (numero, quantidade)
-    values ($1, $2)
-    `, [numero, quantidade])
+async function create(numeroFig: number, quantidadeFig: number, album: number, user: number) {
+
+    await prisma.figurinha.create({
+        data: {
+                numero: numeroFig,
+                quantidade: quantidadeFig,
+                userId: user,
+                albumId: album
+            },
+    })
+
 }
 
-async function search(numFigurinha: number) {
-    return await connectionDb.query(`
-    SELECT * FROM figurinhas f
-    where f.numero = $1
-    `, [numFigurinha])
+async function search(numFigurinha: number, album: number, user: number) {
+    return prisma.figurinha.findFirst({
+        where: {
+            numero: numFigurinha,
+            albumId: album,
+            userId: user
+        },
+        select:{
+            id: true,
+            quantidade: true
+        }
+    })
 }
 
-async function won(numero: number, quantidade: number)  {
-    return await connectionDb.query(`
-    UPDATE figurinhas
-    SET quantidade = quantidade + $1
-    WHERE numero = $2
-    `, [quantidade, numero])
+async function wonOrLost(quantidade: number, figurinhaId: number) {
+    await prisma.figurinha.update({
+        where:{
+            id: figurinhaId
+        },
+        data: {
+            quantidade: {increment: quantidade}
+        }
+    }
+    )
 }
 
-async function lost(numero: number, quantidade:number)  {
-    return await connectionDb.query(`
-    UPDATE figurinhas
-    SET quantidade = quantidade - $2
-    WHERE numero = $1
-    `, [numero, quantidade])
-}
 
-async function get()  {
-    return await connectionDb.query(`
-    SELECT numero, quantidade
-    FROM figurinhas
-    ORDER BY numero ASC
-    `,)
+async function get() {
+
+    return prisma.figurinha.findMany({
+        select: {
+            id: true,
+            numero: true,
+            quantidade: true,
+            user: {
+                select: {
+                    id: true,
+                    username: true                   
+                }
+            },
+            album: {
+                select:{
+                    id: true,
+                    nome:true
+                }
+            }
+        }
+    })
 }
 
 export default {
     create,
-    search, 
-    lost,
-    won,
+    search,
+    wonOrLost,
     get
 }

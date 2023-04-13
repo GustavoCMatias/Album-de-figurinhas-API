@@ -1,50 +1,49 @@
+import { number } from 'joi';
 import figurinhaRepository from '../repository/figurinha.repository';
-import { Figurinha } from './../protocols';
+import { IFigurinha } from './../protocols';
 
-function hasDuplicates(array: number[]) {
-    return (new Set(array)).size !== array.length;
-}
 
-async function create(figurinha:Figurinha) {
+async function create(figurinha:IFigurinha) {
 
-    const retorno  = await figurinhaRepository.search(figurinha.numero)
-    if(retorno.rowCount){
-        await figurinhaRepository.won(figurinha.numero, figurinha.quantidade)
-        return     
+    const listFigurinha = await figurinhaRepository.search(figurinha.numero, figurinha.albumId, figurinha.userId)
+
+    if(listFigurinha === null){
+        return await figurinhaRepository.create(figurinha.numero, figurinha.quantidade, figurinha.albumId, figurinha.userId)
     }
 
-    await figurinhaRepository.create(figurinha.numero, figurinha.quantidade)
+    await figurinhaRepository.wonOrLost(figurinha.quantidade, listFigurinha.id)
+    
 
 }
 
 async function get() {
     const listFigurinha = await figurinhaRepository.get()
-    return listFigurinha.rows
+    return listFigurinha
 }
 
-async function trade(fig_ganha: number, fig_perdida: number) {
+async function trade(user1: IFigurinha, user2: IFigurinha) {
 
+    if(user1.userId === user2.userId ) throw Error ;
+
+    const checkPerdidaUser1 = await figurinhaRepository.search(user1.numero, user1.albumId, user1.userId);
+    if(checkPerdidaUser1 === null || checkPerdidaUser1.quantidade < user1.quantidade) throw Error;
+
+    const checkPerdidaUser2 = await figurinhaRepository.search(user2.numero, user2.albumId, user2.userId);
+    if(checkPerdidaUser2 === null || checkPerdidaUser2.quantidade < user2.quantidade) throw Error;
+
+    await create({numero: user2.numero, quantidade: user2.quantidade, albumId: user2.albumId, userId: user1.userId});
+    await figurinhaRepository.wonOrLost(-user1.quantidade, checkPerdidaUser1.id);
+
+    await create({numero: user1.numero, quantidade: user1.quantidade, albumId: user1.albumId, userId: user2.userId});
+    await figurinhaRepository.wonOrLost(-user2.quantidade, checkPerdidaUser2.id);
+}
+
+async function lost(figPerdida: IFigurinha) {
     
-    const retorno_perdida  = await figurinhaRepository.search(fig_perdida)
-    if( retorno_perdida.rowCount === 0 || retorno_perdida.rows[0].quantidade === 0 ) throw Error
-    await figurinhaRepository.lost(fig_perdida, 1)
+    const retorno  = await figurinhaRepository.search(figPerdida.numero, figPerdida.albumId, figPerdida.userId)
+    if( retorno === null || retorno.quantidade < figPerdida.quantidade ) throw Error
 
-
-    const retorno_ganha  = await figurinhaRepository.search(fig_ganha)
-    if(retorno_ganha.rowCount){
-        await figurinhaRepository.won(fig_ganha, 1)
-        return     
-    }
-
-    await figurinhaRepository.create(fig_ganha, 1)
-    return
-}
-
-async function lost(fig_perdida:number, quantidade:number) {
-    const retorno  = await figurinhaRepository.search(fig_perdida)
-    if( retorno.rowCount === 0 || retorno.rows[0].quantidade < quantidade ) throw Error
-
-    await figurinhaRepository.lost(fig_perdida, quantidade)
+    await figurinhaRepository.wonOrLost(-figPerdida.quantidade, retorno.id)
 }
 
 export default{

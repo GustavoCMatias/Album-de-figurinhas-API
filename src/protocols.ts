@@ -1,9 +1,19 @@
-export type Figurinha = {
+export interface IFigurinha {
     numero: number,
-    quantidade: number
-}
+    quantidade: number,
+    albumId: number,
+    userId: number
+  }
 
 export interface ITrocaBody {
-    fig_ganha: number,
-    fig_perdida: number
-  }
+    user1: IFigurinha,
+    user2: IFigurinha
+}
+
+export interface IAlbum {
+  nome: string
+}
+
+export interface IUser {
+  username: string
+}

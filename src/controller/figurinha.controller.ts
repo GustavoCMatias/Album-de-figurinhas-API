@@ -1,10 +1,10 @@
-import { Figurinha, ITrocaBody } from './../protocols';
+import { ITrocaBody, IFigurinha } from './../protocols';
 import { Request, Response } from 'express';
 import figurinhaService from '../services/figurinha.service';
 
 
 async function create(req: Request, res: Response) {
-    const figurinhaList = req.body as Figurinha;
+    const figurinhaList = req.body as IFigurinha;
     try{
         await figurinhaService.create(figurinhaList)
         res.sendStatus(201)
@@ -23,9 +23,9 @@ async function get(_req: Request, res: Response) {
 }
 
 async function trade(req: Request, res: Response) {
-    const {fig_ganha, fig_perdida} = req.body as ITrocaBody;
+    const {user1, user2}: ITrocaBody = req.body
     try{
-        await figurinhaService.trade(fig_ganha, fig_perdida)
+        await figurinhaService.trade(user1, user2)
         res.sendStatus(201)
     }catch(err){
         res.status(500).send(err.message)
@@ -33,10 +33,10 @@ async function trade(req: Request, res: Response) {
 }
 
 async function lost(req: Request, res: Response)  {
-    const figurinhaPerdida = req.body as Figurinha
+    const figurinhaPerdida = req.body as IFigurinha
 
     try{
-        await figurinhaService.lost(figurinhaPerdida.numero, figurinhaPerdida.quantidade)
+        await figurinhaService.lost(figurinhaPerdida)
         res.sendStatus(201)
     }catch(err){
         res.status(500).send(err.message)
