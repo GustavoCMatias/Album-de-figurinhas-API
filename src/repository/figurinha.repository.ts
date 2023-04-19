@@ -1,5 +1,5 @@
 
-import prisma from "../config/database.js";
+import prisma from "../config/database";
 
 async function create(numeroFig: number, quantidadeFig: number, album: number, user: number) {
 
