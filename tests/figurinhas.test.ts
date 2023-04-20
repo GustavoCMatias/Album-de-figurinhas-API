@@ -39,14 +39,11 @@ describe('POST /figurinha', () => {
             numero: existingFig[0].numero,
             quantidade: 3,
             userId: existingFig[0].userId,
-            albumId: existingFig[0].userId
+            albumId: existingFig[0].albumId
         };
 
-        console.log('aqui')
+        const response = await api.post('/figurinha').send(figurinhaPost);
 
-        const response = await api.post('figurinha').set(figurinhaPost);
-
-        console.log('aqui2')
         const figurinhas = await prisma.figurinha.findFirst({
             where: {
                 numero: existingFig[0].numero,
@@ -55,7 +52,7 @@ describe('POST /figurinha', () => {
             }
         });
 
-        console.log('figurinhas ', figurinhas)
+        expect(response.statusCode).toEqual(201);
 
         expect(figurinhas.quantidade).toEqual(existingFig[0].quantidade + 3);
 
@@ -63,25 +60,27 @@ describe('POST /figurinha', () => {
 
         expect(figurinhasCount).toEqual(2);
 
-        expect(response.statusCode).toEqual(201);
+        
 
     })
 
     it('Should create new figurinha if number does not exist', async () => {
 
+        const existingFig = await prisma.figurinha.findMany({});
+
         const figurinhaPost = {
             numero: 4,
             quantidade: 3,
-            userId: 1,
-            albumId: 1
+            userId: existingFig[0].userId,
+            albumId: existingFig[0].albumId
         }
 
-        const response = await api.post('figurinha').set(figurinhaPost);
+        const response = await api.post('/figurinha').send(figurinhaPost);
         const figurinhas = await prisma.figurinha.count();
 
-        expect(figurinhas).toEqual(3);
-
         expect(response.statusCode).toEqual(201);
+
+        expect(figurinhas).toEqual(3);
 
     })
 
@@ -107,7 +106,7 @@ describe('POST /figurinha/troca', () => {
             }
         };
 
-        const response = await api.post('figurinha/troca').set(tradePost);
+        const response = await api.post('/figurinha/troca').send(tradePost);
 
         expect(response.statusCode).toEqual(500);
     })
@@ -133,7 +132,7 @@ describe('POST /figurinha/troca', () => {
             }
         };
 
-        const response = await api.post('figurinha/troca').set(tradePost);
+        const response = await api.post('/figurinha/troca').send(tradePost);
 
         expect(response.statusCode).toEqual(500);
 
@@ -158,7 +157,7 @@ describe('POST /figurinha/troca', () => {
             }
         };
 
-        const response = await api.post('figurinha/troca').set(tradePost);
+        const response = await api.post('/figurinha/troca').send(tradePost);
         const user1Loss = await prisma.figurinha.findFirst({
             where: {
                 numero: figurinhas[0].numero,
@@ -191,11 +190,12 @@ describe('POST /figurinha/troca', () => {
             }
         })
 
+        expect(response.statusCode).toEqual(201);
         expect(user1Loss.quantidade).toEqual(2);
         expect(user1Gain.quantidade).toEqual(figurinhas[1].quantidade - 2);
         expect(user2Loss.quantidade).toEqual(2);
         expect(user2Gain.quantidade).toEqual(figurinhas[0].quantidade - 2);
-        expect(response.statusCode).toEqual(200);
+        
     })
     
 })
@@ -212,7 +212,7 @@ describe('DELETE /figurinha', () => {
                 userId: figurinhas[0].userId,
         };
 
-        const response = await api.delete('figurinha').set(lossPost);
+        const response = await api.delete('/figurinha').send(lossPost);
 
         expect(response.statusCode).toEqual(500);
     })
@@ -227,7 +227,7 @@ describe('DELETE /figurinha', () => {
                 userId: figurinhas[0].userId,
         };
 
-        const response = await api.delete('figurinha').set(lossPost);
+        const response = await api.delete('/figurinha').send(lossPost);
 
         const figs = await prisma.figurinha.findFirst({
             where: {
@@ -237,8 +237,8 @@ describe('DELETE /figurinha', () => {
             }
         })
 
+        expect(response.statusCode).toEqual(201);
         expect(figs.quantidade).toEqual(1);
 
-        expect(response.statusCode).toEqual(201);
     })
 })
