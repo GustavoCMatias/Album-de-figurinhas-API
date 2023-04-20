@@ -13,10 +13,6 @@ beforeAll(async () => {
     await cleanDB();
 })
 
-// afterAll(async () => {
-//     app.close()
-// });
-
 describe('POST /figurinha', () => {
     it('Should increase count if figurinha exists', async () => {
         await createAlbum();
@@ -60,7 +56,7 @@ describe('POST /figurinha', () => {
 
         expect(figurinhasCount).toEqual(2);
 
-        
+
 
     })
 
@@ -87,7 +83,7 @@ describe('POST /figurinha', () => {
 })
 
 describe('POST /figurinha/troca', () => {
-    
+
     it('Should return 422 if trade quantity is not avaliable', async () => {
         const figurinhas = await prisma.figurinha.findMany({})
 
@@ -195,21 +191,21 @@ describe('POST /figurinha/troca', () => {
         expect(user1Gain.quantidade).toEqual(figurinhas[1].quantidade - 2);
         expect(user2Loss.quantidade).toEqual(2);
         expect(user2Gain.quantidade).toEqual(figurinhas[0].quantidade - 2);
-        
+
     })
-    
+
 })
 
 describe('DELETE /figurinha', () => {
-    
-    it('Should return 500 if loss quantity is not avaliable',async () => {
-        const figurinhas = await prisma.figurinha.findMany({}) 
+
+    it('Should return 500 if loss quantity is not avaliable', async () => {
+        const figurinhas = await prisma.figurinha.findMany({})
 
         const lossPost = {
-                numero: figurinhas[0].numero,
-                quantidade: figurinhas[0].quantidade + 1,
-                albumId: figurinhas[0].albumId,
-                userId: figurinhas[0].userId,
+            numero: figurinhas[0].numero,
+            quantidade: figurinhas[0].quantidade + 1,
+            albumId: figurinhas[0].albumId,
+            userId: figurinhas[0].userId,
         };
 
         const response = await api.delete('/figurinha').send(lossPost);
@@ -217,14 +213,14 @@ describe('DELETE /figurinha', () => {
         expect(response.statusCode).toEqual(500);
     })
 
-    it('Should return 201 if everything is ok',async () => {
+    it('Should return 201 if everything is ok', async () => {
         const figurinhas = await prisma.figurinha.findMany({})
-        
+
         const lossPost = {
-                numero: figurinhas[0].numero,
-                quantidade: figurinhas[0].quantidade - 1,
-                albumId: figurinhas[0].albumId,
-                userId: figurinhas[0].userId,
+            numero: figurinhas[0].numero,
+            quantidade: figurinhas[0].quantidade - 1,
+            albumId: figurinhas[0].albumId,
+            userId: figurinhas[0].userId,
         };
 
         const response = await api.delete('/figurinha').send(lossPost);
@@ -240,5 +236,32 @@ describe('DELETE /figurinha', () => {
         expect(response.statusCode).toEqual(201);
         expect(figs.quantidade).toEqual(1);
 
+    })
+})
+
+describe('GET /figurinha', () => {
+    it('Should return correct info', async () => {
+        const response = await api.get('/figurinha')
+        expect(response.body).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    id: expect.any(Number),
+                    numero: expect.any(Number),
+                    quantidade: expect.any(Number),
+                    user: expect.objectContaining(
+                        {
+                            id: expect.any(Number),
+                            username: expect.any(String)
+                        }
+                    ),
+                    album: expect.objectContaining(
+                        {
+                            id: expect.any(Number),
+                            nome: expect.any(String)
+                        }
+                    ),
+                })
+            ])
+        )
     })
 })
