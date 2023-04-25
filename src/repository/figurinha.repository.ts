@@ -3,7 +3,7 @@ import prisma from "../config/database";
 
 async function create(numeroFig: number, quantidadeFig: number, album: number, user: number) {
 
-    await prisma.figurinha.create({
+    return prisma.figurinha.create({
         data: {
                 numero: numeroFig,
                 quantidade: quantidadeFig,

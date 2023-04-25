@@ -1,3 +1,4 @@
+import errors from "errors";
 import { NextFunction, Request, Response } from "express";
 import joi from "joi"
 
@@ -8,7 +9,7 @@ export function validateSchema(schema: joi.Schema){
         
         if(error){
             const err = error.details.map((detail) => detail.message);
-            return res.status(422).send(err);
+            throw errors.conflictError(err)
         }
 
         next();
