@@ -29,7 +29,7 @@ async function search(numFigurinha: number, album: number, user: number) {
 }
 
 async function wonOrLost(quantidade: number, figurinhaId: number) {
-    await prisma.figurinha.update({
+    return await prisma.figurinha.update({
         where:{
             id: figurinhaId
         },

@@ -9,7 +9,7 @@ export function validateSchema(schema: joi.Schema){
         
         if(error){
             const err = error.details.map((detail) => detail.message);
-            throw errors.conflictError(err)
+            throw errors.invalidBody(err)
         }
 
         next();

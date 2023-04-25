@@ -43,7 +43,6 @@ async function trade(user1: IFigurinha, user2: IFigurinha) {
 async function lost(figPerdida: IFigurinha) {
     
     const retorno  = await figurinhaRepository.search(figPerdida.numero, figPerdida.albumId, figPerdida.userId)
-    if( retorno === null || retorno.quantidade < figPerdida.quantidade ) throw Error
     if(retorno === null) throw errors.notFoundError;
     if(retorno.quantidade < figPerdida.quantidade) throw errors.conflictQuantity;
 

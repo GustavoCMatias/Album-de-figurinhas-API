@@ -4,6 +4,13 @@ function conflictError(message: string[]) {
       message,
     };
   }
+
+function invalidBody(message: string[]){
+  return {
+    name: "InvalidBody",
+    message,
+  };
+}
   
 //   function duplicatedEmailError(email: string) {
 //     return {
@@ -36,7 +43,7 @@ function conflictError(message: string[]) {
   
   export default {
     conflictError,
-    // duplicatedEmailError,
+    invalidBody,
     notFoundError,
     conflictTrade,
     conflictQuantity

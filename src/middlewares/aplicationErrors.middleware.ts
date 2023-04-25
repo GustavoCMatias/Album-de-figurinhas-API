@@ -6,8 +6,13 @@ export function handleApplicationErrors(err, req, res, next) {
       message: err.message,
     });
   }
+  if (err.name === "InvalidBody") {
+    return res.status(httpStatus.UNPROCESSABLE_ENTITY).send({
+      message: err.message,
+    });
+  }
 
-  if (err.name === "NotFoundError") {
+  if (err.name === "notFoundError") {
     return res.status(httpStatus.NOT_FOUND).send({
       message: err.message,
     });
@@ -18,7 +23,7 @@ export function handleApplicationErrors(err, req, res, next) {
     })
   }
 
-  if (err.name === "ConflictTrade") {
+  if (err.name === "conflictTrade") {
     return res.status(httpStatus.CONFLICT).send({
       message: err.message
     })

@@ -37,7 +37,7 @@ async function lost(req: Request, res: Response, next: NextFunction)  {
 
     try{
         const result = await figurinhaService.lost(figurinhaPerdida)
-        res.sendStatus(201).send(result)
+        res.status(201).send(result)
     }catch(err){
         next(err);
     }
