@@ -1,24 +1,24 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { IUser } from 'protocols';
 import userService from 'services/user.service';
 
 
-async function create(req: Request, res: Response) {
+async function create(req: Request, res: Response, next: NextFunction) {
     const user = req.body as IUser;
     try{
-        await userService.create(user)
-        res.sendStatus(201)
+        const newUser = await userService.create(user)
+        res.status(201).send(newUser);
     }catch(err){
-        res.status(500).send(err.message)
+        next(err);
     }
 }
 
-async function get(_req: Request, res: Response) {
+async function get(_req: Request, res: Response, next: NextFunction) {
     try{
         const users = await userService.get()
         res.status(200).send(users)
     }catch(err){
-        res.status(500).send(err.message)
+        next(err);
     }
 }
 

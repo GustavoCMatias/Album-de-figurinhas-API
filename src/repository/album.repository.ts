@@ -3,20 +3,21 @@ import prisma from "../config/database";
 
 async function create(nome: string) {
 
-    return await prisma.album.upsert({
-        where: {
-            nome: nome
-        },
-        create: {
-            nome: nome
-        },
-        update: {
-
+    return await prisma.album.create({
+        data: {
+            nome
         }
     })
-
 }
 
+async function search(nome: string) {
+
+    return await prisma.album.findUnique({
+        where: {
+            nome
+        }
+    })
+}
 
 async function get() {
 
@@ -30,5 +31,6 @@ async function get() {
 
 export default {
     create,
+    search,
     get
 }

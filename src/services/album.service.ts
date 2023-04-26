@@ -1,15 +1,14 @@
+import errors from 'errors';
 import { IAlbum } from './../protocols';
 import albumRepository from 'repository/album.repository';
 
 
 async function create(album: IAlbum) {
 
-    const albumExists = await albumRepository.create(album.nome)
-    const now = new Date;
+    const albumExists = await albumRepository.search(album.nome)
+    if(albumExists) throw errors.duplicatedNameError();
 
-    const diff = now.getTime() - albumExists.created_at.getTime()
-
-    if(diff > 100) throw Error
+    return await albumRepository.create(album.nome)
     
 }
 

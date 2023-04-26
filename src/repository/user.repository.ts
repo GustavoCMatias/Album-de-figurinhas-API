@@ -3,20 +3,21 @@ import prisma from "../config/database";
 
 async function create(username: string) {
 
-    return await prisma.user.upsert({
-        where: {
-            username: username
-        },
-        create: {
-            username: username
-        },
-        update: {
-
+    return await prisma.user.create({
+        data: {
+            username
         }
     })
-
 }
 
+async function search(username: string) {
+
+    return await prisma.user.findUnique({
+        where: {
+            username
+        }
+    })
+}
 
 async function get() {
 
@@ -30,5 +31,6 @@ async function get() {
 
 export default {
     create,
-    get
+    get,
+    search
 }

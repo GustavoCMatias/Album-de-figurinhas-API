@@ -8,8 +8,8 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "prisma:seed": "npx prisma db seed",
-    "test": "npx dotenv -e .env.test npx jest -i",
-    "test:watch": "npx dotenv -e .env.test npx jest --watch --passWithNoTests --runInBand",
+    "test": "cross-env NODE_ENV=test jest --passWithNoTests --runInBand",
+    "test:watch": "cross-env NODE_ENV=test jest --watch --passWithNoTests --runInBand",
     "test:coverage": "cross-env NODE_ENV=test jest --passWithNoTests --runInBand --coverage --collectCoverageFrom='./src/**'"
   },
   "prisma": {

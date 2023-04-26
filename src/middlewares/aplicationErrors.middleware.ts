@@ -1,13 +1,22 @@
+import { NextFunction } from 'express';
+import { Response } from 'express';
 import httpStatus from 'http-status'
 
-export function handleApplicationErrors(err, req, res, next) {
+export function handleApplicationErrors(err: Error, _req: Request, res: Response, _next: NextFunction) {
   if (err.name === "ConflictError" || err.name === "DuplicatedEmailError") {
     return res.status(httpStatus.CONFLICT).send({
       message: err.message,
     });
   }
+
   if (err.name === "InvalidBody") {
     return res.status(httpStatus.UNPROCESSABLE_ENTITY).send({
+      message: err.message,
+    });
+  }
+
+  if (err.name === "duplicatedNameError") {
+    return res.status(httpStatus.CONFLICT).send({
       message: err.message,
     });
   }

@@ -1,15 +1,14 @@
+import errors from 'errors';
 import { IUser } from '../protocols';
 import userRepository from 'repository/user.repository';
 
 
 async function create(user: IUser) {
 
-    const userExists = await userRepository.create(user.username)
-    const now = new Date;
+    const userExists = await userRepository.search(user.username)
+    if(userExists) throw errors.duplicatedNameError();
 
-    const diff = now.getTime() - userExists.created_at.getTime()
-
-    if(diff > 100) throw Error
+    return await userRepository.create(user.username)
     
 }
 

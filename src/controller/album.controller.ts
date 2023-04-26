@@ -1,24 +1,25 @@
+import { NextFunction } from 'express';
 import { IAlbum } from './../protocols';
 import { Request, Response } from 'express';
 import albumService from 'services/album.service';
 
 
-async function create(req: Request, res: Response) {
+async function create(req: Request, res: Response, next: NextFunction) {
     const album = req.body as IAlbum;
     try{
-        await albumService.create(album)
-        res.sendStatus(201)
+        const newAlbum = await albumService.create(album);
+        res.status(201).send(newAlbum);
     }catch(err){
-        res.status(500).send(err.message)
+        next(err);
     }
 }
 
-async function get(_req: Request, res: Response) {
+async function get(_req: Request, res: Response, next: NextFunction) {
     try{
         const users = await albumService.get()
         res.status(200).send(users)
     }catch(err){
-        res.status(500).send(err.message)
+        next(err);
     }
 }
 
