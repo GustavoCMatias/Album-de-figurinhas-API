@@ -41,6 +41,8 @@ describe('POST /users', () => {
             username: faker.name.firstName()
         };
 
+
+        
         const response = await api.post('/user').send(userPost);
 
         expect(response.statusCode).toEqual(201);
